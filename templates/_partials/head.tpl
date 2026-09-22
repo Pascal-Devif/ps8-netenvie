@@ -68,9 +68,31 @@
       {/foreach}
       {/if}
   {/block}
-  {include file="_partials/microdata-jsonld.tpl"}
 
-  {include file="_partials/pagination-seo.tpl"}
+  {block name='head_microdata'}
+    {include file='_partials/microdata/head-jsonld.tpl'}
+  {/block}
+
+  {block name='head_microdata_special'}{/block}
+
+  {block name='head_pagination_seo'}
+    {include file='_partials/pagination-seo.tpl'}
+  {/block}
+
+  {block name='head_open_graph'}
+    <meta property="og:title" content="{$page.meta.title}">
+    <meta property="og:description" content="{$page.meta.description}">
+    <meta property="og:url" content="{$urls.current_url}">
+    <meta property="og:site_name" content="{$shop.name}">
+    {if !isset($product) && $page.page_name != 'product'}
+      <meta property="og:type" content="website">
+    {/if}
+    {if $page.page_name === 'category' && isset($category) && isset($category.image) && isset($category.image.large) && $category.image.large.url}
+      <meta property="og:image" content="{$category.image.large.url}">
+    {elseif $page.page_name != 'product'}
+      <meta property="og:image" content="{$shop.logo}">
+    {/if}
+  {/block}
 
 {/block}
 
