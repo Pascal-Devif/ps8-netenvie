@@ -26,13 +26,43 @@
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name" : "{$shop.name}",
-    "url" : "{$urls.pages.index}"
+    "name" : "{$shop.name|escape:'javascript':'UTF-8'}",
+    "url" : "{$urls.pages.index|escape:'javascript':'UTF-8'}"
     {if $shop.logo_details}
      ,"logo": {
         "@type": "ImageObject",
-        "url":"{$shop.logo_details.src}"
+        "url":"{$shop.logo_details.src|escape:'javascript':'UTF-8'}"
       }
+    {/if}
+    {if $shop.email}
+     ,"email": "{$shop.email|escape:'javascript':'UTF-8'}"
+    {/if}
+    {if $shop.address.address1 || $shop.address.city || $shop.address.postcode}
+     ,"address": {
+        "@type": "PostalAddress"
+        {if $shop.address.address1}
+          ,"streetAddress": "{$shop.address.address1|escape:'javascript':'UTF-8'}"
+        {/if}
+        {if $shop.address.postcode}
+          ,"postalCode": "{$shop.address.postcode|escape:'javascript':'UTF-8'}"
+        {/if}
+        {if $shop.address.city}
+          ,"addressLocality": "{$shop.address.city|escape:'javascript':'UTF-8'}"
+        {/if}
+        {if $shop.address.state}
+          ,"addressRegion": "{$shop.address.state|escape:'javascript':'UTF-8'}"
+        {/if}
+        {if $shop.address.country}
+          ,"addressCountry": "{$shop.address.country|escape:'javascript':'UTF-8'}"
+        {/if}
+      }
+    {/if}
+    {if $shop.phone}
+     ,"contactPoint": [{
+        "@type": "ContactPoint",
+        "telephone": "{$shop.phone|escape:'javascript':'UTF-8'}",
+        "contactType": "customer service"
+      }]
     {/if}
   }
 </script>
