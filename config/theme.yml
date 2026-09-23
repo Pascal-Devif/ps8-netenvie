@@ -176,6 +176,9 @@ override_settings:
     init_content_override_product_all_images: 1 # ajout de la variable smarty allImages (toutes les images du produit)
     remove_display_ajax_refresh_override: 0
     display_ajax_refresh_override_product_descriptions: 1 # Ajax : split la description du produit (délimitateur) + var smarty manufacturername (nom de la marque)
+  controller_cms:
+    remove_init_content_override: 0
+    init_content_override_cms_jsonld: 1 # assigne image + dates pour le JSON-LD Article des pages CMS
   controller_listing_manufacturer:
     remove_get_template_var_manufacturers_override: 0 # renvoie la liste des marques avec des infos en plus (fonctionnel ??)
 

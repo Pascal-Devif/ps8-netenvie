@@ -24,6 +24,10 @@
  *}
 {extends file='page.tpl'}
 
+{block name='head_microdata_special'}
+  {include file='_partials/microdata/cms-jsonld.tpl'}
+{/block}
+
 {block name='page_title'}
   {$cms.meta_title}
 {/block}
