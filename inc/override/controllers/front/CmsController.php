@@ -49,7 +49,6 @@ class CmsControllerTheme extends CmsControllerCore
         $this->ensureCmsDateColumns();
 
         $image = $this->extractCmsImage($this->cms->content);
-        $this->seedCmsDatesFromImageIfEmpty($image);
         $dates = $this->resolveCmsDates();
 
         $this->context->smarty->assign([
@@ -89,7 +88,7 @@ class CmsControllerTheme extends CmsControllerCore
     }
 
     /**
-     * Article dates come from CMS date_add / date_upd (not from the image).
+     * Article dates come only from CMS date_add / date_upd.
      *
      * @return array{published: string|null, modified: string|null}
      */
@@ -135,68 +134,6 @@ class CmsControllerTheme extends CmsControllerCore
         }
 
         Configuration::updateValue('PS8_NETENVIE_CMS_DATES', 1);
-    }
-
-    /**
-     * Legacy seed only: if CMS has no dates yet, copy image filemtime into the CMS row once.
-     * After that, dates live on the article and no longer depend on the image.
-     *
-     * @param string|null $imageUrl
-     */
-    protected function seedCmsDatesFromImageIfEmpty($imageUrl)
-    {
-        $hasPublished = !empty($this->cms->date_add) && $this->cms->date_add !== '0000-00-00 00:00:00';
-        $hasModified = !empty($this->cms->date_upd) && $this->cms->date_upd !== '0000-00-00 00:00:00';
-        if ($hasPublished && $hasModified) {
-            return;
-        }
-
-        $timestamp = $this->getCmsImageTimestamp($imageUrl);
-        if (!$timestamp) {
-            return;
-        }
-
-        $mysqlDate = date('Y-m-d H:i:s', $timestamp);
-        $dateAdd = $hasPublished ? $this->cms->date_add : $mysqlDate;
-        $dateUpd = $hasModified ? $this->cms->date_upd : $mysqlDate;
-
-        Db::getInstance()->update('cms', [
-            'date_add' => pSQL($dateAdd),
-            'date_upd' => pSQL($dateUpd),
-        ], 'id_cms = ' . (int) $this->cms->id);
-
-        $this->cms->date_add = $dateAdd;
-        $this->cms->date_upd = $dateUpd;
-    }
-
-    /**
-     * @param string|null $imageUrl
-     *
-     * @return int|null
-     */
-    protected function getCmsImageTimestamp($imageUrl)
-    {
-        if (!$imageUrl) {
-            return null;
-        }
-
-        $path = parse_url($imageUrl, PHP_URL_PATH);
-        if (!$path) {
-            return null;
-        }
-
-        $localPath = _PS_ROOT_DIR_ . $path;
-        if (!is_file($localPath)) {
-            $fallback = _PS_IMG_DIR_ . 'cms/' . basename($path);
-            if (!is_file($fallback)) {
-                return null;
-            }
-            $localPath = $fallback;
-        }
-
-        $timestamp = @filemtime($localPath);
-
-        return $timestamp ?: null;
     }
 
     /**
