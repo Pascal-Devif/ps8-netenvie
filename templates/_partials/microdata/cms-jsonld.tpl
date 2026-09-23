@@ -1,6 +1,3 @@
-{**
- * JSON-LD Article schema for CMS pages.
- *}
 {assign var='cms_article_headline' value=$cms.meta_title|default:$page.meta.title}
 {assign var='cms_article_description' value=$page.meta.description|default:$cms.meta_description|default:''}
 {if !$cms_article_description && isset($cms.content) && $cms.content}
@@ -23,8 +20,6 @@
 {elseif $cms_article_image && $cms_article_image|substr:0:1 == '/'}
   {assign var='cms_article_image' value="{$urls.shop_domain_url}{$cms_article_image}"}
 {/if}
-
-{* No logo fallback: omit Article.image when the CMS page has no /img/cms/ image *}
 
 {assign var='cms_article_lang' value=$language.locale|default:'fr-FR'}
 {if isset($cms_jsonld_date_published) && $cms_jsonld_date_published}
