@@ -42,7 +42,7 @@ class CmsControllerTheme extends CmsControllerCore
     }
 
     /**
-     * Assign image + dates used by templates/_partials/microdata/cms-jsonld.tpl.
+     * Assign image + dates
      */
     protected function assignCmsJsonLdVars()
     {
@@ -88,8 +88,6 @@ class CmsControllerTheme extends CmsControllerCore
     }
 
     /**
-     * Article dates come only from CMS date_add / date_upd.
-     *
      * @return array{published: string|null, modified: string|null}
      */
     protected function resolveCmsDates()
@@ -107,9 +105,6 @@ class CmsControllerTheme extends CmsControllerCore
         ];
     }
 
-    /**
-     * One-shot schema: PrestaShop core CMS table has no date columns.
-     */
     protected function ensureCmsDateColumns()
     {
         if (Configuration::get('PS8_NETENVIE_CMS_DATES')) {
