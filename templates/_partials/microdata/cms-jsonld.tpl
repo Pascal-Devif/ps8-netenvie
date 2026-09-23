@@ -24,13 +24,7 @@
   {assign var='cms_article_image' value="{$urls.shop_domain_url}{$cms_article_image}"}
 {/if}
 
-{if !$cms_article_image}
-  {if isset($shop.logo_details.src) && $shop.logo_details.src}
-    {assign var='cms_article_image' value=$shop.logo_details.src}
-  {elseif $shop.logo}
-    {assign var='cms_article_image' value=$shop.logo}
-  {/if}
-{/if}
+{* No logo fallback: omit Article.image when the CMS page has no /img/cms/ image *}
 
 {assign var='cms_article_lang' value=$language.locale|default:'fr-FR'}
 {if isset($cms_jsonld_date_published) && $cms_jsonld_date_published}
@@ -44,38 +38,44 @@
   {assign var='cms_date_modified' value=$cms_date_published}
 {/if}
 
+{if isset($shop.logo_details.src) && $shop.logo_details.src}
+  {assign var='cms_publisher_logo' value=$shop.logo_details.src}
+{else}
+  {assign var='cms_publisher_logo' value=$shop.logo}
+{/if}
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "{$cms_article_headline|escape:'javascript':'UTF-8'}",
-  "description": "{$cms_article_description|regex_replace:"/[\r\n]/" : " "|escape:'javascript':'UTF-8'}",
+  "headline": {$cms_article_headline|json_encode nofilter},
+  "description": {$cms_article_description|regex_replace:"/[\r\n]/" : " "|json_encode nofilter},
   {if $cms_article_image}
-  "image": "{$cms_article_image|escape:'javascript':'UTF-8'}",
+  "image": {$cms_article_image|json_encode nofilter},
   {/if}
   {if $cms_date_published}
-  "datePublished": "{$cms_date_published|escape:'javascript':'UTF-8'}",
+  "datePublished": {$cms_date_published|json_encode nofilter},
   {/if}
   {if $cms_date_modified}
-  "dateModified": "{$cms_date_modified|escape:'javascript':'UTF-8'}",
+  "dateModified": {$cms_date_modified|json_encode nofilter},
   {/if}
-  "inLanguage": "{$cms_article_lang|escape:'javascript':'UTF-8'}",
+  "inLanguage": {$cms_article_lang|json_encode nofilter},
   "author": {
     "@type": "Organization",
-    "name": "{$shop.name|escape:'javascript':'UTF-8'}",
-    "url": "{$urls.pages.index|escape:'javascript':'UTF-8'}"
+    "name": {$shop.name|json_encode nofilter},
+    "url": {$urls.pages.index|json_encode nofilter}
   },
   "publisher": {
     "@type": "Organization",
-    "name": "{$shop.name|escape:'javascript':'UTF-8'}",
+    "name": {$shop.name|json_encode nofilter},
     "logo": {
       "@type": "ImageObject",
-      "url": "{if isset($shop.logo_details.src) && $shop.logo_details.src}{$shop.logo_details.src|escape:'javascript':'UTF-8'}{else}{$shop.logo|escape:'javascript':'UTF-8'}{/if}"
+      "url": {$cms_publisher_logo|json_encode nofilter}
     }
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "{$cms_article_url|escape:'javascript':'UTF-8'}"
+    "@id": {$cms_article_url|json_encode nofilter}
   }
 }
 </script>
